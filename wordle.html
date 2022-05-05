@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wordle - from Wardle</title>
+    <meta
+      property="description"
+      content="Guess the hidden word in 6 tries."
+    />
+    <meta property="og:title" content="Wordle - A word game" />
+    <meta
+      property="og:description"
+      content="Guess the hidden word in 6 tries."
+    />    
+    <style>
+        .tg  {border-collapse:collapse;border-spacing:0;}
+        .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+          overflow:hidden;padding:10px 5px;word-break:normal;text-align:center;}
+        .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+          font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+        .tg .tg-0lax{text-align:left;vertical-align:top}
+        .centered{margin: 0 auto;}
+    </style>
+  </head>
+    <script>
+        //Do things after the DOM loads partially, this function.
+        document.addEventListener("DOMContentLoaded", function () {
+            // do things after the DOM loads partially
+            console.log("DOM is loaded");
+            MainTable = document.getElementById("MainTable");
+            //MainTable.style.background = "rgb(255,0,0)";
+            //Add onclick event to keyboard rows on table.
+            for (var ct = 1; ct < 4; ct++) {
+                var tbl = document.getElementById("LetterGrid" + ct);
+                if (tbl != null) {
+                    for (var i = 0; i < tbl.rows.length; i++) {
+                        for (var j = 0; j < tbl.rows[i].cells.length; j++)
+                            //tbl.rows[i].cells[j].onclick = function () { getval(this); };
+                            tbl.rows[i].cells[j].onclick = function () { processInput(this); };
+                    }
+                }
+            }
+            tableAnswer = document.getElementById("WordGrid");
+        });
+        //var cellText = document.createTextNode("cell in row "+i+", column "+j)
+        var tableAnswer;
+        var intARow=0;
+        var intACol=0;
+        var strCorrect="hello";
+        var currentRowKeyCells = new Array();
+        function processInput(cel) {
+            if (cel.innerHTML == "Bak") {
+                backLetter(cel);
+            }
+            else if (cel.innerHTML == "Ent") {
+                makeGuess(cel)
+            }
+            else {
+                enterLetter(cel);
+            }
+            //alert(cel.innerHTML);            
+        }
+        function enterLetter(cel) {
+            if (intACol <5) {
+                tableAnswer.rows[intARow].cells[intACol].innerHTML = cel.innerHTML;
+                cel.style.backgroundColor = "Grey"
+                currentRowKeyCells.push(cel);
+                if ((intACol+1)<6) {intACol++;}
+            }            
+        }
+        function backLetter(cel) {
+            if ((intACol)>0) {
+                tableAnswer.rows[intARow].cells[intACol-1].innerHTML = "*";
+                //cel.style.backgroundColor = "yellow"
+                var poppedLetter = currentRowKeyCells.pop();
+                //Need to add check to see if same letter still in array before making white.
+                popLarray = currentRowKeyCells.filter(cel => cel.innerHTML === poppedLetter.innerHTML);
+                if (popLarray.length == 0) {poppedLetter.style.backgroundColor = "White";}
+                if ((intACol-1)>-1) {intACol--;}
+            }           
+        }
+        function makeGuess(cel){
+            //Process guess
+            strGuess = "";
+            for (var j = 0; j < tableAnswer.rows[intARow].cells.length; j++)
+                strGuess = strGuess + tableAnswer.rows[intARow].cells[j].innerHTML;
+            if (strGuess == strCorrect)
+                alert("You got it!");
+            if (strGuess == "ouaot")
+                alert(strCorrect);
+            result = compare(strGuess,strCorrect);
+            for (var j = 0; j < tableAnswer.rows[intARow].cells.length; j++)
+                tableAnswer.rows[intARow].cells[j].style.backgroundColor = result[j];
+            //Inc Row & Reset col to 0 after processing guess
+            if ((intARow+1)<5) {intARow++;intACol=0;}
+            if (intARow > 5) {
+                //process Last Guess
+               alert("You Failed");
+            }          
+        }
+        function getval(cel) {
+            alert(cel.innerHTML);
+        }
+        function compare(guess, solution) {
+            let result = [];
+            for (let i=0; i<guess.length; i++) {
+                guessLetter=guess.charAt(i);
+                solutionLetter=solution.charAt(i);
+                if (guessLetter === solutionLetter) {
+                    result.push("Green");
+                }
+                else if (solution.indexOf(guessLetter) != -1) {
+                    result.push("Yellow");
+                }
+                else {
+                    result.push("Grey");
+                }
+            }
+            return result;
+        }
+    </script>
+  <body>
+
+
+    <table class="centered" id="MainTable" name="MainTable">
+      <tr>
+        <td class="tg-0lax" align ="center">
+        
+            <table class="tg" id="WordGrid" name="WordGrid">
+            <tbody>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+                <td class="tg-0lax">*</td>
+              </tr>
+            </tbody>
+            </table>    
+        
+        </td>
+      </tr>
+      <tr>
+        <td>
+        
+            <table class="centered" id="LetterGrid" name="LetterGrid">
+            <tbody>
+              <tr>
+                <td class="tg-0lax" align ="center">
+                
+                    <table class="tg" id="LetterGrid1" name="LetterGrid1">
+                      <tr>
+                        <td class="tg-0lax">q</td>
+                        <td class="tg-0lax">w</td>
+                        <td class="tg-0lax">e</td>
+                        <td class="tg-0lax">r</td>
+                        <td class="tg-0lax">t</td>
+                        <td class="tg-0lax">y</td>
+                        <td class="tg-0lax">u</td>
+                        <td class="tg-0lax">i</td>
+                        <td class="tg-0lax">o</td>
+                        <td class="tg-0lax">p</td>
+                      </tr>
+                    </table>
+                
+                </td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" align ="center">
+                
+                    <table class="tg" id="LetterGrid2" name="LetterGrid2">
+                      <tr>
+                        <td class="tg-0lax">a</td>
+                        <td class="tg-0lax">s</td>
+                        <td class="tg-0lax">d</td>
+                        <td class="tg-0lax">f</td>
+                        <td class="tg-0lax">g</td>
+                        <td class="tg-0lax">h</td>
+                        <td class="tg-0lax">j</td>
+                        <td class="tg-0lax">k</td>
+                        <td class="tg-0lax">l</td>
+                      </tr>
+                    </table>
+                
+                </td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" align ="center">
+                
+                    <table class="tg" id="LetterGrid3" name="LetterGrid3">
+                      <tr>
+                        <td class="tg-0lax">Ent</td>
+                        <td class="tg-0lax">z</td>
+                        <td class="tg-0lax">x</td>
+                        <td class="tg-0lax">c</td>
+                        <td class="tg-0lax">v</td>
+                        <td class="tg-0lax">b</td>
+                        <td class="tg-0lax">n</td>
+                        <td class="tg-0lax">m</td>
+                        <td class="tg-0lax">Bak</td>
+                      </tr>
+                    </table>
+                
+                </td>
+              </tr>
+            </tbody>
+            </table>    
+        
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>
